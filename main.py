@@ -4,6 +4,10 @@ Created on Mon Dec  5 11:36:41 2022
 
 @author: hg22aal
 """
+"""
+This is a file of code which is used to do comparison of data from 3 different datasets
+and coclude to notify at world level
+"""
 #import useful libraries
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,7 +19,7 @@ This function returns converted data to dataframe and transposed dataframe data
 """
 def readFile(x):
     fileData = pd.read_csv(x);
-    transposedFileData = pd.read_csv(x, header=None,index_col=0).T
+    transposedFileData = pd.read_csv(x, header=None, index_col=0).T
     transposedFileData = transposedFileData.rename(columns={"Country Name":"Year"})
     transposedFileData = transposedFileData.fillna(0.0)
     return fileData, transposedFileData
@@ -23,11 +27,11 @@ def readFile(x):
 """
 lineGraph_df is a function which takes a transposed matrix and plot the line graph using pandas
 """
-def lineGraph_df(transposedFileData,label):
+def lineGraph_df(transposedFileData, label):
     Countries = ["China", "United States", "India", "Canada", "United Kingdom"]
-    year = ["2000","2001" ,"2002","2003","2004","2005","2006" ,"2007","2008" ,"2009", "2010", "2011", "2012", "2013"]
+    year = ["2000", "2001" , "2002", "2003", "2004", "2005", "2006" , "2007", "2008", "2009", "2010", "2011", "2012", "2013"]
     transposedFileData.update({"Year" : year})
-    transposedFileData.plot("Year",["China", "United States", "India", "Canada", "United Kingdom"],figsize=(20,15))
+    transposedFileData.plot("Year", ["China", "United States", "India", "Canada", "United Kingdom"], figsize=(10,7))
     plt.legend(Countries)
     plt.ylabel(label)
     plt.savefig("line Graph")
@@ -45,40 +49,15 @@ def sliceData(trfileData):
 this function takes transposed matrix and plot the bar graph using pandas
 """
 def barGraph_df(transposedFileData):
-    print(transposedFileData)
     slicedFiledata = sliceData(transposedFileData)
     Countries = ["China", "United States", "India", "Canada", "United Kingdom"]
-    year = ["2003","2004","2005","2006","2007","2008","2009", "2009","2010", "2011"]
-    
-    slicedFiledata.plot.bar(x="Year", y=["India", "Canada","United Kingdom","United States","China"])
+    year = ["2003", "2004", "2005", "2006", "2007", "2008", "2009",  "2009", "2010", "2011"]
+    slicedFiledata.plot.bar(x="Year", y=["India", "Canada", "United Kingdom", "United States", "China"])
     plt.ylabel("Electricity production from renewable sources")
     plt.legend(Countries)
     plt.savefig("Bar graph")
-    
-"""
-def pieChart(x):
-    fileData = pd.read_csv(x)
-    print(fileData)
-    fileData[["2010"]] = fileData[["2010"]].apply(pd.to_numeric)
-    total= [fileData["2010"].sum()]
-    print(total)
-    plt.figure()
-    plt.pie([fileData['Canada'],total-fileData['Canada']],labels = ["Canada","Rst world"],autopct = "%1.1f%%")
-    plt.show()
-    
-   
-    population = readFile(x)
-    print("Fdfdf")
-    print(population)
-    plt.figure()
-    label = ["2004", "2005", "2006", "2007","2008"]
-    plt.pie(population['Australia'], labels = label, autopct = "%1.1f%%")
-    plt.title("United Kingdom agricultural land")
-    plt.legend()
-    plt.show()
-   
 
-"""
+
 """
 This function returns total values of the world
 """
@@ -102,7 +81,7 @@ powerConsume_Df, transposedpoCon_df = readFile("powerConsumption.csv")
 proFRenew_df, transProFRenew_df = readFile("productionFromRenew.csv")
 
 #plot population line graph
-lineGraph_df(transposedPop_df,"Population")
+lineGraph_df(transposedPop_df, "Population")
 
 #plot powerconsumption line graph
 plotGraph3 = lineGraph_df(transposedpoCon_df,"powerConsumption")
@@ -110,7 +89,7 @@ plotGraph3 = lineGraph_df(transposedpoCon_df,"powerConsumption")
 #plot the bar graph of production of electricity from renewable sources
 p3 = barGraph_df(transProFRenew_df)
 
-year = ["2000","2001" ,"2002","2003","2004","2005","2006" ,"2007","2008" ,"2009", "2010", "2011"]
+year = ["2000", "2001", "2002", "2003", "2004", "2005", "2006" , "2007", "2008", "2009", "2010", "2011"]
 
 #calsulating the total world values
 population = totalList(population_df, year, ["Total World Population"])

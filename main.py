@@ -11,7 +11,6 @@ and coclude to notify at world level
 #import useful libraries
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 
 """
 Created function that reads a file, Update NAN values with 0 and transposed matrix
@@ -42,7 +41,7 @@ This function return the sliced data
 def sliceData(trfileData):
     trfileData = pd.DataFrame(trfileData)
     trfileData['Year'] = trfileData['Year'].astype(int)
-    trfileData = trfileData.iloc[28:37]
+    trfileData = trfileData.iloc[30:35]
     return trfileData
 
 """
@@ -50,9 +49,8 @@ this function takes transposed matrix and plot the bar graph using pandas
 """
 def barGraph_df(transposedFileData):
     slicedFiledata = sliceData(transposedFileData)
-    Countries = ["China", "United States", "India", "Canada", "United Kingdom"]
-    year = ["2003", "2004", "2005", "2006", "2007", "2008", "2009",  "2009", "2010", "2011"]
-    slicedFiledata.plot.bar(x="Year", y=["India", "Canada", "United Kingdom", "United States", "China"])
+    Countries = [ "India", "Canada", "United Kingdom"]
+    slicedFiledata.plot.bar(x="Year", y=["India", "Canada", "United Kingdom"])
     plt.ylabel("Electricity production from renewable sources")
     plt.legend(Countries)
     plt.savefig("Bar graph")
@@ -69,38 +67,83 @@ def totalList(df, year, li):
 """
 this function plots the graph using matploit for the world
 """
-def barplot(years, li, label):
+def barplot(year, li, label):
     plt.figure()
-    plt.bar(years, li)
+    plt.bar(year, li)
+   # xyz ="dfsdf"
+    #plt.xlabel(xyz)
     plt.ylabel(label)
     plt.xlabel("Years")
+    plt.legend(loc = "upper right")
     plt.show()
     
+"""
+ this function plots the line graph using matploit for the world
+"""   
+def lineplot(year, li, label):
+    plt.figure()
+    plt.plot(year,li)
+    plt.legend(loc = "upper right")
+    plt.xlabel("Year")
+    plt.ylabel(label)
+    plt.show()
+    
+"""
+calculating the percentage of data for all factros
+"""   
+def percentageData(li):
+    increaseList = [0]
+    for i in range(2, len(li)):
+        increaseList.append((li[i]*100.0/li[i-1])-100)
+    return increaseList
+
+"""
+plotting the line graph using pandas
+"""
+def lineplot_df(data, countries, label):
+    plt.figure()
+    data.plot("Year", countries)
+    plt.ylabel(label)
+    plt.legend(countries)
+    plt.show()
+    
+#read the csv file  
 population_df, transposedPop_df = readFile("pop3.csv")
 powerConsume_Df, transposedpoCon_df = readFile("powerConsumption.csv")
-proFRenew_df, transProFRenew_df = readFile("productionFromRenew.csv")
+agriLand_df, transAgriLand_df = readFile("AgriLand.csv")
+forestArea_df, transForestArea_df = readFile("ForestArea.csv")
 
 #plot population line graph
 lineGraph_df(transposedPop_df, "Population")
 
 #plot powerconsumption line graph
-plotGraph3 = lineGraph_df(transposedpoCon_df,"powerConsumption")
+lineGraph_df(transposedpoCon_df,"powerConsumption")
 
-#plot the bar graph of production of electricity from renewable sources
-p3 = barGraph_df(transProFRenew_df)
+#plot the bar graph of agriculture land and forest land
+barGraph_df(transAgriLand_df)
+barGraph_df(transForestArea_df)
 
 year = ["2000", "2001", "2002", "2003", "2004", "2005", "2006" , "2007", "2008", "2009", "2010", "2011"]
 
 #calsulating the total world values
 population = totalList(population_df, year, ["Total World Population"])
 powerConsumption = totalList(powerConsume_Df, year, ["Total World Power Consumption"])
-productionFRen = totalList(proFRenew_df, year, ["Total eelectricity production"])
+agriLand = totalList(agriLand_df, year, ["Total Agriculture Land"])
+forestArea = totalList(forestArea_df, year, ["Total Agriculture Land"])
 
 populationLabel = "Total World Population Data"
 powerConsumptiionLabel = "Total world PowerConsumption"
-productionFRenLabel = "world production of electricity from renewable source"
+agriLandLabel = "Total Agriculture land"
+forestAreaLabel = "Total Forest Area"
 
 #ploting world bar graph 
 barplot(year, population[1:], populationLabel)
 barplot(year, powerConsumption[1:], powerConsumptiionLabel)
-barplot(year, productionFRen[1:], productionFRenLabel)
+lineplot(year, agriLand[1:], agriLandLabel)
+lineplot(year, forestArea[1:], forestAreaLabel)
+
+#plotting the combined graph for all factors
+totalData = dict(zip([populationLabel, powerConsumptiionLabel, agriLandLabel, forestAreaLabel], [percentageData(population), percentageData(powerConsumption), percentageData(agriLand), percentageData(forestArea)]))
+totalData.update({"Year" : year})
+totalData = pd.DataFrame(totalData)
+lineplot_df(totalData, [populationLabel, powerConsumptiionLabel, agriLandLabel, forestAreaLabel],"increase or decrease from previous")
